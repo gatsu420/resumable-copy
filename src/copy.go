@@ -49,13 +49,13 @@ func ResumableCopy(src string, dest string, resumeAt int, chunkSize int, lag int
 	for {
 		n, err := srcFile.Read(buffer)
 		if n > 0 {
-			nw, writeErr := destFile.Write(buffer)
+			// When Read hits last iteration, n could be less than length of buffer because
+			// it is just before EOF. Therefore, some bytes in buffer can remain unchanged.
+			// Limit buffer length to length of changed bytes so unchanged bytes won't be
+			// written twice (they already did in previous iteration).
+			nw, writeErr := destFile.Write(buffer[:n])
 
 			fmt.Printf("copied byte index %v to %v \n", resumeAtInt64, resumeAtInt64+int64(nw)-1)
-			// cmd := exec.Command("cat", dest)
-			// cmd.Stdout = os.Stdout
-			// _ = cmd.Run()
-			// fmt.Println()
 			resumeAtInt64 += int64(nw)
 
 			if writeErr != nil {
