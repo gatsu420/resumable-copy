@@ -1,10 +1,10 @@
 package cmd
 
 import (
-	"log"
-
 	"github.com/gatsu420/resumable-copy/src"
 	"github.com/spf13/cobra"
+
+	zlog "github.com/rs/zerolog/log"
 )
 
 var (
@@ -25,7 +25,7 @@ It loops based on chunk size.
 	Run: func(cmd *cobra.Command, args []string) {
 		err := src.ResumableCopy(srcFile, destFile, resumeAt, chunkSize, lag)
 		if err != nil {
-			log.Fatal(err)
+			zlog.Fatal().Err(err).Send()
 		}
 
 	},
