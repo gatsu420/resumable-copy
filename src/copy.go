@@ -6,6 +6,8 @@ import (
 	"io"
 	"os"
 	"time"
+
+	zlog "github.com/rs/zerolog/log"
 )
 
 func ResumableCopy(src string, dest string, resumeAt int, chunkSize int, lag int) error {
@@ -55,7 +57,11 @@ func ResumableCopy(src string, dest string, resumeAt int, chunkSize int, lag int
 			// written twice (they already did in previous iteration).
 			nw, writeErr := destFile.Write(buffer[:n])
 
-			fmt.Printf("copied byte index %v to %v \n", resumeAtInt64, resumeAtInt64+int64(nw)-1)
+			zlog.Info().
+				Str("message", fmt.Sprintf(
+					"copied byte index %v to %v", resumeAtInt64, resumeAtInt64+int64(nw)-1,
+				)).
+				Send()
 			resumeAtInt64 += int64(nw)
 
 			if writeErr != nil {
