@@ -1,0 +1,7 @@
+services:
+  resumable-copy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: resumable-copy
+    restart: on-failure:5
